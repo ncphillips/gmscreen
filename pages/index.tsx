@@ -1,5 +1,5 @@
-import { Encounter } from '@components/encounter';
+import { DisplayEncounter } from '@components/encounter';
 
 export default function Home() {
-  return <Encounter />;
+  return <DisplayEncounter />;
 }

@@ -3,7 +3,7 @@ import { InitiativeOrder } from './initiative-order';
 import { AddCharacterForm } from './add-character';
 import { useEncounter } from '@hooks/use-encounter';
 
-export function Encounter() {
+export function DisplayEncounter() {
   const encounter = useEncounter();
   return (
     <div>
