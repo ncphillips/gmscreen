@@ -6,12 +6,21 @@ Run a better game.
 
 ### Get Started
 
-Run the development server:
+Clone the Repository
 
 ```bash
 git clone git@github.com:ncphillips/gmscreen.git
 cd gmscreen
 yarn install
+```
+
+Setup Firebase
+
+- Go to Firebase and setup a FireStore
+
+Start the App
+
+```
 yarn dev
 ```
 
@@ -23,6 +32,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to use the
 - React
 - Next.js
 - Vercel Hosting
+- Firebase
 
 ### Deployments
 
