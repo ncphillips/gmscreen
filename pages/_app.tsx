@@ -2,9 +2,14 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import { AuthContext, useAuth } from '@auth';
+import { useEffect } from 'react';
 
 export default function MyApp({ Component, pageProps }) {
   const auth = useAuth();
+
+  useEffect(() => {
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+  }, []);
 
   return (
     <AuthContext.Provider value={auth}>
@@ -26,5 +31,4 @@ var firebaseConfig = {
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
-  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 }
