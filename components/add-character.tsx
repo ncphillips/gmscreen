@@ -7,28 +7,28 @@ export function AddCharacterForm({
   addCharacter(character: Character): void;
 }) {
   const name = useRef<HTMLInputElement>();
-  const initiative = useRef<HTMLInputElement>();
+  const initMod = useRef<HTMLInputElement>();
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        addCharacter({
-          name: name.current.value,
-          initiative: ~~initiative.current.value,
-        });
+        addCharacter(
+          new Character(name.current.value, ~~initMod.current.value)
+        );
       }}
     >
       <label htmlFor='add-character-name'>
         Name
         <input id='add-character-name' ref={name} />
       </label>
-      <label htmlFor='add-character-initiative'>
-        Initiative
+      <label htmlFor='add-character-initiative-mod'>
+        Init Mod
         <input
-          id='add-character-initiative'
-          ref={initiative}
+          id='add-character-initiative-mod'
+          ref={initMod}
           type='number'
-          defaultValue={10}
+          defaultValue={0}
+          step={1}
         />
         <input type='submit' value='Submit' />
       </label>

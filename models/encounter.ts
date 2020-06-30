@@ -1,4 +1,4 @@
-import { Encounter } from '@components/encounter';
+import { D20 } from './dice';
 
 /**
  * Model
@@ -13,7 +13,10 @@ export interface EncounterMethods {
 
 export interface Encounter extends EncounterMethods, EncounterState {}
 
-export interface Character {
-  name: string;
+export class Character {
   initiative: number;
+
+  constructor(public name: string, public initMod?: number) {
+    this.initiative = D20.roll() + initMod;
+  }
 }
