@@ -16,7 +16,7 @@ yarn install
 
 Setup Firebase
 
-- Go to Firebase and setup a FireStore
+- Go to Firebase and setup a FireStore and Auth
 
 Start the App
 
