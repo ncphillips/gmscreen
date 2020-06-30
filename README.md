@@ -9,19 +9,20 @@ Run a better game.
 Run the development server:
 
 ```bash
+git clone git@github.com:ncphillips/gmscreen.git
+cd gmscreen
+yarn install
 yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to use the app.
 
-### Learn More
+### Technology
 
-GM Screen is built using Next.js. To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- Typescript
+- React
+- Next.js
+- Vercel Hosting
 
 ### Deployments
 
