@@ -4,11 +4,13 @@ import { D20 } from './dice';
  * Model
  */
 export interface EncounterState {
+  activeCharacter: string;
   characters: Character[];
 }
 
 export interface EncounterMethods {
   addCharacter(character: Character): void;
+  nextTurn(): void;
 }
 
 export interface Encounter extends EncounterMethods, EncounterState {}

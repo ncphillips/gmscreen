@@ -17,6 +17,7 @@ export function InitiativeOrder({ encounter }: { encounter: Encounter }) {
               <tr>
                 <td>{character.initiative}</td>
                 <td>{character.name}</td>
+                <td>{character.name === encounter.activeCharacter && '<--'}</td>
               </tr>
             );
           })}
