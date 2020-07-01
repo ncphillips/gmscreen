@@ -54,9 +54,15 @@ export class Encounter {
     this.id = id;
   }
 
+  characters = [];
+
   delete() {
     firestore().collection('encounter').doc(this.id).delete();
   }
+
+  addCharacter(data: any) {}
+
+  nextTurn() {}
 
   static create(data: EncounterData) {
     return Encounter.collection.add(data);

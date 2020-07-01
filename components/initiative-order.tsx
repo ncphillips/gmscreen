@@ -1,4 +1,4 @@
-import { Encounter } from '@models/encounter';
+import { Encounter } from '@encounters';
 
 export function InitiativeOrder({ encounter }: { encounter: Encounter }) {
   return (
@@ -17,7 +17,7 @@ export function InitiativeOrder({ encounter }: { encounter: Encounter }) {
               <tr>
                 <td>{character.initiative}</td>
                 <td>{character.name}</td>
-                <td>{character.name === encounter.activeCharacter && '<--'}</td>
+                {/* <td>{character.name === encounter.activeCharacter && '<--'}</td> */}
               </tr>
             );
           })}

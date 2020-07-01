@@ -1,10 +1,9 @@
-import { Character } from '@models/encounter';
 import { useRef } from 'react';
 
 export function AddCharacterForm({
   addCharacter,
 }: {
-  addCharacter(character: Character): void;
+  addCharacter(name: string, initMod: number): void;
 }) {
   const name = useRef<HTMLInputElement>();
   const initMod = useRef<HTMLInputElement>();
@@ -14,9 +13,7 @@ export function AddCharacterForm({
         onSubmit={(e) => {
           e.preventDefault();
           if (name.current.value) {
-            addCharacter(
-              new Character(name.current.value, ~~initMod.current.value)
-            );
+            addCharacter(name.current.value, ~~initMod.current.value);
           }
         }}
       >

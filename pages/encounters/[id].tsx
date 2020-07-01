@@ -1,5 +1,7 @@
 import { useEncounter } from '@encounters';
 import { useRouter } from 'next/router';
+import { InitiativeOrder } from '@components/initiative-order';
+import { AddCharacterForm } from '@components/add-character';
 
 export default function DisplayEncounter() {
   const router = useRouter();
@@ -21,10 +23,10 @@ export default function DisplayEncounter() {
     <div>
       <h2>{encounter.data.name}</h2>
 
-      {/* <button onClick={encounter.reset}>Reset Encounter</button>
-      <AddCharacterForm addCharacter={encounter.addCharacter} />
-      <button onClick={encounter.nextTurn}>Next Turn</button>
-      <InitiativeOrder encounter={encounter} /> */}
+      <button onClick={encounter.data.reset}>Reset Encounter</button>
+      <AddCharacterForm addCharacter={encounter.data.addCharacter} />
+      <button onClick={encounter.data.nextTurn}>Next Turn</button>
+      <InitiativeOrder encounter={encounter.data} />
     </div>
   );
 }
