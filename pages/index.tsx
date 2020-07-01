@@ -1,12 +1,15 @@
 import { Layout } from '@components/layout';
 import { useAuthRequiredRedirect } from '@auth';
-import { useEncounterCollection } from '@encounters';
+import { useEncounterCollection, Encounter } from '@encounters';
+import { useRef } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
   useAuthRequiredRedirect();
 
   return (
     <Layout>
+      <CreateEncounterForm />
       <EncounterList />
     </Layout>
   );
@@ -22,8 +25,37 @@ function EncounterList() {
   return (
     <ul>
       {encounters.data.map((encounter) => (
-        <li key={encounter.id}>{encounter.name}</li>
+        <li key={encounter.id}>
+          <Link href={`/encounters/${encounter.id}`}>
+            <a>{encounter.name}</a>
+          </Link>
+          <button onClick={() => encounter.delete()}>Destroy</button>
+        </li>
       ))}
     </ul>
+  );
+}
+
+function CreateEncounterForm() {
+  const nameRef = useRef<HTMLInputElement>();
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+
+        const name = nameRef.current.value;
+
+        if (!name) return;
+
+        Encounter.create({ name });
+      }}
+    >
+      <label>
+        Name:
+        <input ref={nameRef} />
+      </label>
+      <input type='submit' value='Create Encounter' />
+    </form>
   );
 }
