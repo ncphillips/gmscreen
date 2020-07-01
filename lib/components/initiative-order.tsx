@@ -1,6 +1,7 @@
 import { Encounter } from '@encounters';
 
 export function InitiativeOrder({ encounter }: { encounter: Encounter }) {
+  const characters = [];
   return (
     <table>
       <thead>
