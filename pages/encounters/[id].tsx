@@ -6,6 +6,7 @@ import { AddCharacterForm } from '@components/add-character';
 export default function DisplayEncounter() {
   const router = useRouter();
   const encounter = useEncounter(router.query.id as string);
+  console.log(encounter);
 
   if (encounter.loading) {
     return <h2>Loading</h2>;

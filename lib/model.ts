@@ -12,7 +12,9 @@ export abstract class Model {
     return this.collection.add(data);
   }
   static findById(id: string, callback: (encounters: Model) => void) {
+    console.log(id, this.collectionName);
     this.collection.doc(id).onSnapshot((query) => {
+      console.log(query);
       callback(this.fromQuery(query));
     });
   }

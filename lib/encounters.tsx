@@ -53,5 +53,5 @@ export function useEncounterCollection() {
 }
 
 export function useEncounter(id?: string) {
-  return useRecord(id);
+  return useRecord(Encounter, id);
 }
