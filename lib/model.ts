@@ -20,27 +20,19 @@ abstract class Collection {
     return this.fromDoc(doc_1);
   }
 
-  static findById<Data = any>(id: string): Promise<Record<Data>> {
-    return new Promise((resolve, reject) => {
-      this.collection.doc(id).onSnapshot((query) => {
-        if (query.exists) {
-          resolve(this.fromDoc<Data>(query));
-        } else {
-          reject();
-        }
-      });
+  static findById<Data = any>(id: string, cb: Callback<Record<Data>>) {
+    this.collection.doc(id).onSnapshot((query) => {
+      if (query.exists) {
+        cb(this.fromDoc<Data>(query));
+      }
     });
   }
 
-  static all<Data = any>(): Promise<Record<Data>[]> {
-    return new Promise((resolve, reject) => {
-      this.collection.onSnapshot((query: firestore.QuerySnapshot<Data>) => {
-        const records = query.docs.map((doc) => this.fromDoc<Data>(doc));
+  static all<Data = any>(cb: Callback<Record<Data>[]>): void {
+    this.collection.onSnapshot((query: firestore.QuerySnapshot<Data>) => {
+      const records = query.docs.map((doc) => this.fromDoc<Data>(doc));
 
-        // TODO: Handle rejection
-
-        resolve(records);
-      });
+      cb(records);
     });
   }
 
@@ -48,6 +40,8 @@ abstract class Collection {
     throw new Error('Not implemented');
   }
 }
+
+type Callback<Response> = (response: Response) => void;
 
 export abstract class Record<Data = firestore.DocumentData> extends Collection {
   protected doc: Doc<Data>;
@@ -71,7 +65,8 @@ export function useRecord(Model: typeof Record, id?: string) {
 
   useEffect(() => {
     if (!id) return;
-    Model.findById(id).then((data) => {
+
+    Model.findById(id, (data) => {
       setRecord({
         loading: false,
         data,
