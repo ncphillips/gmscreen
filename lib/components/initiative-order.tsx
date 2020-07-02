@@ -1,8 +1,7 @@
 import { Encounter } from '@encounters';
-import { useCharacterCollection } from '@characters';
 
 export function InitiativeOrder({ encounter }: { encounter: Encounter }) {
-  const characters = useCharacterCollection();
+  const characters = encounter.characters;
   return (
     <table>
       <thead>
@@ -12,7 +11,7 @@ export function InitiativeOrder({ encounter }: { encounter: Encounter }) {
         </tr>
       </thead>
       <tbody>
-        {characters.data
+        {characters
           .sort((a, b) => b.initiative - a.initiative)
           .map((character) => {
             return (
