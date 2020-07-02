@@ -16,7 +16,10 @@ export function AddCharacterForm({
           const name = nameRef.current.value;
           const initMod = ~~initModRef.current.value;
           if (name) {
-            Character.create({ name, initMod }).then(addCharacter);
+            const character = new Character({ name, initMod });
+            character.rollInitiative();
+            character.save();
+            addCharacter(character);
           }
         }}
       >

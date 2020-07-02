@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Record, useRecord, Doc } from '@model';
+import { D20 } from '@dice';
 
 export type CharacterDoc = Doc<CharacterData>;
 
@@ -13,12 +14,16 @@ export class Character extends Record<CharacterData> {
   get initMod() {
     return this.data.initMod;
   }
+
+  rollInitiative() {
+    this.data.initiative = this.initMod + D20.roll();
+  }
 }
 
 interface CharacterData {
   name: string;
   initMod: number;
-  initiative: number;
+  initiative?: number;
 }
 
 /**
