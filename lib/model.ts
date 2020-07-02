@@ -5,7 +5,7 @@ export type Doc<Data = firestore.DocumentData> = firestore.DocumentSnapshot<
   Data
 >;
 
-abstract class Collection {
+abstract class Collection<Data extends firestore.DocumentData> {
   static get collectionName(): string {
     throw new Error('Model collectionName was not defined');
   }
@@ -33,11 +33,18 @@ abstract class Collection {
       cb(records);
     });
   }
+
+  protected get collection(): firestore.CollectionReference<Data> {
+    // @ts-ignore
+    return this.constructor.collection;
+  }
 }
 
 type Callback<Response> = (response: Response) => void;
 
-export abstract class Record<Data = firestore.DocumentData> extends Collection {
+export abstract class Record<Data = firestore.DocumentData> extends Collection<
+  Data
+> {
   protected doc: Doc<Data>;
   protected data: Data;
 
@@ -57,8 +64,7 @@ export abstract class Record<Data = firestore.DocumentData> extends Collection {
 
   async save() {
     if (!this.doc) {
-      // @ts-ignore
-      const query = await this.constructor.collection.add(this.data);
+      const query = await this.collection.add(this.data);
       const doc = await query.get();
       this.doc = doc;
       this.data = doc.data();
@@ -67,8 +73,7 @@ export abstract class Record<Data = firestore.DocumentData> extends Collection {
   }
 
   delete() {
-    // @ts-ignore
-    this.constructor.collection.doc(this.id).delete();
+    this.collection.doc(this.id).delete();
   }
 }
 
