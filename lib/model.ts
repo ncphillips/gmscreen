@@ -18,12 +18,15 @@ abstract class Collection {
     return this.collection.add(data);
   }
 
-  static findById<R extends Record = Record>(
-    id: string,
-    callback: (record: R) => void
-  ) {
-    this.collection.doc(id).onSnapshot((query) => {
-      callback(this.fromDoc(query));
+  static findById<R extends Record = Record>(id: string): Promise<R> {
+    return new Promise((resolve, reject) => {
+      this.collection.doc(id).onSnapshot((query) => {
+        if (query.exists) {
+          resolve(this.fromDoc(query));
+        } else {
+          reject();
+        }
+      });
     });
   }
 
@@ -57,7 +60,7 @@ export abstract class Record extends Collection {
   }
 }
 
-export function useRecord(Model: any, id?: string) {
+export function useRecord(Model: typeof Record, id?: string) {
   const [record, setRecord] = useState({
     loading: true,
     error: null,
@@ -66,7 +69,7 @@ export function useRecord(Model: any, id?: string) {
 
   useEffect(() => {
     if (!id) return;
-    Model.findById(id, (data) => {
+    Model.findById(id).then((data) => {
       setRecord({
         loading: false,
         data,
