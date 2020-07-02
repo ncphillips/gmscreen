@@ -1,12 +1,9 @@
 import { Layout } from '@components/layout';
-import { useAuthRequiredRedirect } from '@auth';
-import { useEncounterCollection, Encounter } from '@encounters';
+import { useEncounterCollection } from '@encounters';
 import { useRef } from 'react';
 import Link from 'next/link';
 
 export default function Home() {
-  useAuthRequiredRedirect();
-
   return (
     <Layout>
       <CreateEncounterForm />
@@ -48,7 +45,7 @@ function CreateEncounterForm() {
 
         if (!name) return;
 
-        new Encounter({ name }).save();
+        // new Encounter({ name }).save();
       }}
     >
       <label>

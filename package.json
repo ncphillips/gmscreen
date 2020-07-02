@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "babas": "^0.2.5",
     "firebase": "^7.15.5",
     "next": "9.4.4",
     "prettier": "^2.0.5",
