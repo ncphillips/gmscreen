@@ -1,24 +1,39 @@
 import { useState, useEffect } from 'react';
 import { Record, useRecord, Doc } from '@model';
+import { D20 } from '@dice';
 
 export type CharacterDoc = Doc<CharacterData>;
 
 export class Character extends Record {
   static collectionName = 'character';
 
-  public name: string;
-  public initMod: number;
+  private data: CharacterData;
 
-  constructor(data: CharacterData, doc?: CharacterDoc) {
+  private constructor() {
     super();
-    this.doc = doc;
-    this.name = data.name;
-    this.initMod = data.initMod;
+  }
+
+  get name() {
+    return this.data.name;
+  }
+
+  get initMod() {
+    return this.data.initMod;
   }
 
   static fromDoc(doc: CharacterDoc) {
     if (!doc.exists) return null;
-    return new Character(doc.data(), doc);
+    const character = new Character();
+    character.doc = doc;
+    character.data = doc.data();
+    return character;
+  }
+
+  static create(data: CharacterData) {
+    return super.create({
+      ...data,
+      initiative: D20.roll() + data.initMod,
+    });
   }
 }
 

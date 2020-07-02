@@ -14,15 +14,17 @@ abstract class Collection {
     return firestore().collection(this.collectionName);
   }
 
-  static create(data: any) {
-    return this.collection.add(data);
+  static async create<Data = any>(data: Data): Promise<Record<Data>> {
+    const doc = await this.collection.add(data);
+    const doc_1 = await doc.get();
+    return this.fromDoc(doc_1);
   }
 
-  static findById<R extends Record = Record>(id: string): Promise<R> {
+  static findById<Data = any>(id: string): Promise<Record<Data>> {
     return new Promise((resolve, reject) => {
       this.collection.doc(id).onSnapshot((query) => {
         if (query.exists) {
-          resolve(this.fromDoc(query));
+          resolve(this.fromDoc<Data>(query));
         } else {
           reject();
         }
@@ -30,10 +32,10 @@ abstract class Collection {
     });
   }
 
-  static all<R extends Record = Record>(): Promise<R[]> {
+  static all<Data = any>(): Promise<Record<Data>[]> {
     return new Promise((resolve, reject) => {
-      this.collection.onSnapshot((query) => {
-        const records = query.docs.map(this.fromDoc);
+      this.collection.onSnapshot((query: firestore.QuerySnapshot<Data>) => {
+        const records = query.docs.map((doc) => this.fromDoc<Data>(doc));
 
         // TODO: Handle rejection
 
@@ -42,13 +44,13 @@ abstract class Collection {
     });
   }
 
-  static fromDoc(doc: Doc) {
-    return null;
+  static fromDoc<Data = any>(doc: Doc): Record<Data> {
+    throw new Error('Not implemented');
   }
 }
 
-export abstract class Record extends Collection {
-  protected doc: Doc;
+export abstract class Record<Data = firestore.DocumentData> extends Collection {
+  protected doc: Doc<Data>;
 
   get id() {
     if (this.doc) return this.doc.id;

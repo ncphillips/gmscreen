@@ -1,30 +1,33 @@
 import { useRef } from 'react';
+import { Character } from '@characters';
 
 export function AddCharacterForm({
   addCharacter,
 }: {
   addCharacter(name: string, initMod: number): void;
 }) {
-  const name = useRef<HTMLInputElement>();
-  const initMod = useRef<HTMLInputElement>();
+  const nameRef = useRef<HTMLInputElement>();
+  const initModRef = useRef<HTMLInputElement>();
   return (
     <>
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (name.current.value) {
-            addCharacter(name.current.value, ~~initMod.current.value);
+          const name = nameRef.current.value;
+          const initMod = ~~initModRef.current.value;
+          if (name) {
+            Character.create({ name, initMod });
           }
         }}
       >
         <label htmlFor='add-character-name'>
-          Name: <input id='add-character-name' ref={name} />
+          Name: <input id='add-character-name' ref={nameRef} />
         </label>
         <label htmlFor='add-character-initiative-mod'>
           Init Mod:{' '}
           <input
             id='add-character-initiative-mod'
-            ref={initMod}
+            ref={initModRef}
             type='number'
             defaultValue={0}
             step={1}
