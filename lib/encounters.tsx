@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Model, useRecord } from '@model';
+import { Record, useRecord, Doc } from '@model';
 
-export class Encounter extends Model {
+export type EncounterDoc = Doc<EncounterData>;
+
+export class Encounter extends Record {
   static collectionName = 'encounter';
 
-  public id: string;
   public name: string;
 
-  constructor(data: EncounterData, id?: string) {
+  constructor(data: EncounterData, doc?: EncounterDoc) {
     super();
     this.name = data.name;
-    this.id = id;
+    this.doc = doc;
   }
 
   characters = [];
@@ -19,9 +20,9 @@ export class Encounter extends Model {
 
   nextTurn() {}
 
-  static fromQuery(doc: any) {
+  static fromDoc(doc: Doc<EncounterData>) {
     if (!doc.exists) return null;
-    return new Encounter(doc.data(), doc.id);
+    return new Encounter(doc.data(), doc);
   }
 }
 

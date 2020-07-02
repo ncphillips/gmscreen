@@ -1,23 +1,24 @@
 import { useState, useEffect } from 'react';
-import { Model, useRecord } from '@model';
+import { Record, useRecord, Doc } from '@model';
 
-export class Character extends Model {
+export type CharacterDoc = Doc<CharacterData>;
+
+export class Character extends Record {
   static collectionName = 'character';
 
-  public id: string;
   public name: string;
   public initMod: number;
 
-  constructor(data: CharacterData, id?: string) {
+  constructor(data: CharacterData, doc?: CharacterDoc) {
     super();
-    this.id = id;
+    this.doc = doc;
     this.name = data.name;
     this.initMod = data.initMod;
   }
 
-  static fromQuery(doc: any) {
+  static fromDoc(doc: CharacterDoc) {
     if (!doc.exists) return null;
-    return new Character(doc.data(), doc.id);
+    return new Character(doc.data(), doc);
   }
 }
 

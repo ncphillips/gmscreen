@@ -1,7 +1,11 @@
 import { firestore } from 'firebase/app';
 import { useState, useEffect } from 'react';
 
-export abstract class Model {
+export type Doc<Data = firestore.DocumentData> = firestore.DocumentSnapshot<
+  Data
+>;
+
+abstract class Collection {
   static get collectionName(): string {
     throw new Error('Model collectionName was not defined');
   }
@@ -11,31 +15,33 @@ export abstract class Model {
   static create(data: any) {
     return this.collection.add(data);
   }
-  static findById(id: string, callback: (encounters: Model) => void) {
-    console.log(id, this.collectionName);
+  static findById(id: string, callback: (record: Record) => void) {
     this.collection.doc(id).onSnapshot((query) => {
-      console.log(query);
-      callback(this.fromQuery(query));
+      callback(this.fromDoc(query));
     });
   }
-  static all(callback: (encounters: Model[]) => void) {
+  static all(callback: (encounters: Record[]) => void) {
     this.collection.onSnapshot((query) => {
-      const encounters = query.docs.map(this.fromQuery);
+      const encounters = query.docs.map(this.fromDoc);
 
       callback(encounters);
     });
   }
-  static fromQuery(data: any) {
+  static fromDoc(doc: Doc) {
     return null;
   }
+}
 
-  id?: string;
+export abstract class Record extends Collection {
+  protected doc: Doc;
+
+  get id() {
+    if (this.doc) return this.doc.id;
+  }
 
   delete() {
     // @ts-ignore
-    this.constructor.collection // @ts-ignore
-      .doc(this.id)
-      .delete();
+    this.constructor.collection.doc(this.id).delete();
   }
 }
 
