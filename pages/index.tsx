@@ -1,7 +1,8 @@
 import { Layout } from '@components/layout';
 import { useEncounterCollection } from '@encounters';
-import { useRef } from 'react';
+import { useRef, useContext } from 'react';
 import Link from 'next/link';
+import { DbContext } from '@db-context';
 
 export default function Home() {
   return (
@@ -15,18 +16,20 @@ export default function Home() {
 function EncounterList() {
   const encounters = useEncounterCollection();
 
-  if (encounters.loading) {
-    return <h3>Loading Encounters</h3>;
-  }
-
   return (
     <ul>
-      {encounters.data.map((encounter) => (
+      {encounters.toArray().map((encounter) => (
         <li key={encounter.id}>
           <Link href={`/encounters/${encounter.id}`}>
             <a>{encounter.name}</a>
           </Link>
-          <button onClick={() => encounter.delete()}>Destroy</button>
+          <button
+            onClick={() => {
+              delete encounters[encounter.id];
+            }}
+          >
+            Destroy
+          </button>
         </li>
       ))}
     </ul>
@@ -34,6 +37,7 @@ function EncounterList() {
 }
 
 function CreateEncounterForm() {
+  const db = useContext(DbContext);
   const nameRef = useRef<HTMLInputElement>();
 
   return (
@@ -45,7 +49,10 @@ function CreateEncounterForm() {
 
         if (!name) return;
 
-        // new Encounter({ name }).save();
+        db.encounters[name] = {
+          id: name,
+          name,
+        };
       }}
     >
       <label>

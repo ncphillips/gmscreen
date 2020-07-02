@@ -1,18 +1,39 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { DbContext } from '@db-context';
 
-/**
- * Opens a live connection to the Encounters collection.
- */
+export interface Encounter {
+  id?: string;
+  name: string;
+  characters: string[];
+}
+
 export function useEncounterCollection() {
-  const [encounters, setEncounters] = useState({
-    loading: true,
-    error: null,
-    data: [],
-  });
+  const forceRender = useForceRender();
+  const db = useContext(DbContext);
 
-  return encounters;
+  useEffect(() => {
+    db.encounters.subscribe(forceRender);
+  }, [db]);
+
+  return db.encounters;
 }
 
 export function useEncounter(id?: string) {
-  return {};
+  const forceRender = useForceRender();
+  const db = useContext(DbContext);
+
+  useEffect(() => {
+    const e = db.encounters[id];
+    if (e) {
+      e.subscribe(forceRender);
+    }
+  }, [db]);
+
+  return db.encounters[id];
+}
+
+function useForceRender() {
+  const [, set] = useState(0);
+
+  return () => set((i) => i + 1);
 }

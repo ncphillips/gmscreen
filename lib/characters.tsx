@@ -1,54 +1,30 @@
-import { useState, useEffect } from 'react';
-import { Record, useRecord, Doc } from '@model';
-import { D20 } from '@dice';
+import { useState, useEffect, useContext } from 'react';
+import { DbContext } from '@db-context';
 
-export type CharacterDoc = Doc<CharacterData>;
-
-export class Character extends Record<CharacterData> {
-  static collectionName = 'character';
-
-  get name() {
-    return this.data.name;
-  }
-
-  get initMod() {
-    return this.data.initMod;
-  }
-
-  rollInitiative() {
-    this.data.initiative = this.initMod + D20.roll();
-  }
-}
-
-interface CharacterData {
+export interface Character {
+  id?: string;
   name: string;
   initMod: number;
   initiative?: number;
 }
 
-/**
- * Opens a live connection to the Characters collection.
- */
 export function useCharacterCollection() {
-  const [characters, setCharacters] = useState({
-    loading: true,
-    error: null,
-    data: [],
-  });
+  const forceRender = useForceRender();
+  const db = useContext(DbContext);
 
   useEffect(() => {
-    Character.all((data) => {
-      setCharacters({
-        loading: false,
-        data,
-        error: null,
-      });
-    });
-  }, []);
+    db.characters.subscribe(forceRender);
+  }, [db]);
 
-  return characters;
+  return db.characters;
 }
 
 export function useCharacter(id?: string) {
-  return useRecord(Character, id);
+  return {};
+}
+
+function useForceRender() {
+  const [, set] = useState(0);
+
+  return () => set((i) => i + 1);
 }

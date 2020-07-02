@@ -1,11 +1,9 @@
 import { useRef } from 'react';
-import { Character } from '@characters';
+import { Character, useCharacterCollection } from '@characters';
+import { D20 } from '@dice';
 
-export function AddCharacterForm({
-  addCharacter,
-}: {
-  addCharacter(character: Character): void;
-}) {
+export function AddCharacterForm({ encounter }: { encounter }) {
+  const characters = useCharacterCollection();
   const nameRef = useRef<HTMLInputElement>();
   const initModRef = useRef<HTMLInputElement>();
   return (
@@ -16,10 +14,16 @@ export function AddCharacterForm({
           const name = nameRef.current.value;
           const initMod = ~~initModRef.current.value;
           if (name) {
-            const character = new Character({ name, initMod });
-            character.rollInitiative();
-            character.save();
-            addCharacter(character);
+            characters[name] = {
+              id: name,
+              name,
+              initMod,
+              initiative: initMod + D20.roll(),
+            };
+
+            const names = encounter.characters || [];
+
+            encounter.characters = [...names, name];
           }
         }}
       >
