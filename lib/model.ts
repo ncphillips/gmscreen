@@ -14,30 +14,24 @@ abstract class Collection {
     return firestore().collection(this.collectionName);
   }
 
-  static async create<Data = any>(data: Data): Promise<Record<Data>> {
-    const doc = await this.collection.add(data);
-    const doc_1 = await doc.get();
-    return this.fromDoc(doc_1);
-  }
-
-  static findById<Data = any>(id: string, cb: Callback<Record<Data>>) {
-    this.collection.doc(id).onSnapshot((query) => {
-      if (query.exists) {
-        cb(this.fromDoc<Data>(query));
+  static findById<R extends Record = Record>(id: string, cb: Callback<R>) {
+    this.collection.doc(id).onSnapshot((doc) => {
+      if (doc.exists) {
+        // @ts-ignore
+        cb(new this(doc));
       }
     });
   }
 
-  static all<Data = any>(cb: Callback<Record<Data>[]>): void {
+  static all<R extends Record = Record, Data = any>(cb: Callback<R[]>): void {
     this.collection.onSnapshot((query: firestore.QuerySnapshot<Data>) => {
-      const records = query.docs.map((doc) => this.fromDoc<Data>(doc));
+      const records = query.docs.map((doc) => {
+        // @ts-ignore
+        return new this(doc);
+      });
 
       cb(records);
     });
-  }
-
-  static fromDoc<Data = any>(doc: Doc): Record<Data> {
-    throw new Error('Not implemented');
   }
 }
 
@@ -45,9 +39,31 @@ type Callback<Response> = (response: Response) => void;
 
 export abstract class Record<Data = firestore.DocumentData> extends Collection {
   protected doc: Doc<Data>;
+  protected data: Data;
+
+  constructor(data: Data | Doc<Data>) {
+    super();
+    if (data instanceof firestore.DocumentSnapshot) {
+      this.doc = data;
+      this.data = data.data();
+    } else {
+      this.data = data;
+    }
+  }
 
   get id() {
     if (this.doc) return this.doc.id;
+  }
+
+  async save() {
+    if (!this.doc) {
+      // @ts-ignore
+      const query = await this.constructor.collection.add(this.data);
+      const doc = await query.get();
+      this.doc = doc;
+      this.data = doc.data();
+      return this;
+    }
   }
 
   delete() {
@@ -56,7 +72,7 @@ export abstract class Record<Data = firestore.DocumentData> extends Collection {
   }
 }
 
-export function useRecord(Model: typeof Record, id?: string) {
+export function useRecord(Model: any, id?: string) {
   const [record, setRecord] = useState({
     loading: true,
     error: null,

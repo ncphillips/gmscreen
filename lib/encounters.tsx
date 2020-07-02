@@ -3,27 +3,18 @@ import { Record, useRecord, Doc } from '@model';
 
 export type EncounterDoc = Doc<EncounterData>;
 
-export class Encounter extends Record {
+export class Encounter extends Record<EncounterData> {
   static collectionName = 'encounter';
 
-  public name: string;
-
-  constructor(data: EncounterData, doc?: EncounterDoc) {
-    super();
-    this.name = data.name;
-    this.doc = doc;
-  }
-
   characters = [];
+
+  get name() {
+    return this.data.name;
+  }
 
   addCharacter(data: any) {}
 
   nextTurn() {}
-
-  static fromDoc(doc: Doc<EncounterData>) {
-    if (!doc.exists) return null;
-    return new Encounter(doc.data(), doc);
-  }
 }
 
 interface EncounterData {

@@ -4,7 +4,7 @@ import { Character } from '@characters';
 export function AddCharacterForm({
   addCharacter,
 }: {
-  addCharacter(name: string, initMod: number): void;
+  addCharacter(character: Character): void;
 }) {
   const nameRef = useRef<HTMLInputElement>();
   const initModRef = useRef<HTMLInputElement>();
@@ -16,7 +16,7 @@ export function AddCharacterForm({
           const name = nameRef.current.value;
           const initMod = ~~initModRef.current.value;
           if (name) {
-            Character.create({ name, initMod });
+            Character.create({ name, initMod }).then(addCharacter);
           }
         }}
       >

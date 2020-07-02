@@ -48,7 +48,7 @@ function CreateEncounterForm() {
 
         if (!name) return;
 
-        Encounter.create({ name });
+        new Encounter({ name }).save();
       }}
     >
       <label>
