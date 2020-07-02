@@ -41,7 +41,7 @@ export function useEncounterCollection() {
   });
 
   useEffect(() => {
-    Encounter.all((data) => {
+    Encounter.all().then((data) => {
       setEncounters({
         loading: false,
         data,

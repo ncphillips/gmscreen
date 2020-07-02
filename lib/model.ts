@@ -9,24 +9,36 @@ abstract class Collection {
   static get collectionName(): string {
     throw new Error('Model collectionName was not defined');
   }
+
   static get collection() {
     return firestore().collection(this.collectionName);
   }
+
   static create(data: any) {
     return this.collection.add(data);
   }
-  static findById(id: string, callback: (record: Record) => void) {
+
+  static findById<R extends Record = Record>(
+    id: string,
+    callback: (record: R) => void
+  ) {
     this.collection.doc(id).onSnapshot((query) => {
       callback(this.fromDoc(query));
     });
   }
-  static all(callback: (encounters: Record[]) => void) {
-    this.collection.onSnapshot((query) => {
-      const encounters = query.docs.map(this.fromDoc);
 
-      callback(encounters);
+  static all<R extends Record = Record>(): Promise<R[]> {
+    return new Promise((resolve, reject) => {
+      this.collection.onSnapshot((query) => {
+        const records = query.docs.map(this.fromDoc);
+
+        // TODO: Handle rejection
+
+        resolve(records);
+      });
     });
   }
+
   static fromDoc(doc: Doc) {
     return null;
   }

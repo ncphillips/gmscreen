@@ -38,7 +38,7 @@ export function useCharacterCollection() {
   });
 
   useEffect(() => {
-    Character.all((data) => {
+    Character.all().then((data) => {
       setCharacters({
         loading: false,
         data,
