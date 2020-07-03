@@ -3,7 +3,6 @@ import { useEncounterCollection } from '@react-encounters';
 import { useRef, useContext } from 'react';
 import Link from 'next/link';
 import { DbContext } from '@db-context';
-import { watch } from 'babas';
 
 export default function Home() {
   return (
