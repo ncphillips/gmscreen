@@ -19,14 +19,14 @@ export function useEncounterCollection() {
 
 export function useEncounter(id?: string) {
   const forceRender = useForceRender();
-  const db = useContext(DbContext);
+  const { encounters } = useContext(DbContext);
 
   useEffect(() => {
-    const e = db.encounters[id];
+    const e = encounters[id];
     if (e) {
       e.subscribe(forceRender);
     }
-  }, [db]);
+  }, [encounters, id]);
 
-  return db.encounters[id];
+  return encounters[id];
 }

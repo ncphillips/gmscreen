@@ -16,7 +16,3 @@ export function useCharacterCollection() {
 
   return db.characters;
 }
-
-export function useCharacter(id?: string) {
-  return {};
-}
