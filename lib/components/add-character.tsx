@@ -1,8 +1,7 @@
 import { useRef } from 'react';
 import { Character, useCharacterCollection } from '@characters';
-import { D20 } from '@dice';
 import { useEncounterCharacters } from '@encounter-characters';
-import { uid } from '@uid';
+import { watch } from 'babas';
 
 export function AddCharacterForm({ encounter }: { encounter }) {
   const encounterCharacters = useEncounterCharacters();
@@ -17,19 +16,13 @@ export function AddCharacterForm({ encounter }: { encounter }) {
           const name = nameRef.current.value;
           const initMod = ~~initModRef.current.value;
           if (name) {
-            characters[name] = {
+            const character = (characters[name] = watch({
               id: name,
               name,
               initMod,
-            };
+            }));
 
-            const id = uid();
-            encounterCharacters[id] = {
-              id,
-              encounterId: encounter.id,
-              characterId: name,
-              initiative: initMod + D20.roll(),
-            };
+            encounterCharacters.add(encounter, character);
           }
         }}
       >
