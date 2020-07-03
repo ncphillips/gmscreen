@@ -5,6 +5,8 @@ export interface Character {
   id?: string;
   name: string;
   initMod: number;
+  hpMax: number;
+  hpCurrent: number;
 }
 
 export type CharacterCollection = Collection<Character>;

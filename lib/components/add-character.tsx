@@ -7,6 +7,7 @@ export function AddCharacterForm({ encounter }: { encounter }) {
   const characters = useCharacterCollection();
   const nameRef = useRef<HTMLInputElement>();
   const initModRef = useRef<HTMLInputElement>();
+  const hpMaxRef = useRef<HTMLInputElement>();
   return (
     <>
       <form
@@ -14,11 +15,14 @@ export function AddCharacterForm({ encounter }: { encounter }) {
           e.preventDefault();
           const name = nameRef.current.value;
           const initMod = ~~initModRef.current.value;
+          const hpMax = ~~hpMaxRef.current.value;
           if (name) {
             const character = characters.add(name, {
               id: name,
               name,
               initMod,
+              hpMax,
+              hpCurrent: hpMax,
             });
 
             encounterCharacters.add(encounter, character);
@@ -36,6 +40,17 @@ export function AddCharacterForm({ encounter }: { encounter }) {
             type='number'
             defaultValue={0}
             step={1}
+          />
+        </label>
+        <label htmlFor='add-character-hp-max'>
+          HP:{' '}
+          <input
+            id='add-character-hp-max'
+            ref={hpMaxRef}
+            type='number'
+            defaultValue={8}
+            step={1}
+            min={1}
           />
         </label>
         <div>
