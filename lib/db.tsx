@@ -1,4 +1,4 @@
-import { watch, createCollection, Subscribable } from 'babas';
+import { watch, createCollection, Subscribable, Collection } from 'babas';
 import { Encounter } from '@encounters';
 import { Character } from '@characters';
 import {
@@ -14,15 +14,15 @@ export const createDb = () => {
   return {
     encounters,
     characters,
-    encounterCharacters: createEncounterCharacters(),
+    encounterCharacters: createEncounterCharacters(characters),
   };
 };
 
-function createEncounterCharacters() {
+function createEncounterCharacters(characters: Collection<Character>) {
   const encounterCharacters = createCollection<
     EncounterCharacter,
     EncounterCharacterMethods
-  >(load('encounter-characters'), () => {
+  >(load('encounter-characters'), (ec) => {
     return {
       add(encounter: Encounter, character: Character) {
         const ec: EncounterCharacter = {
@@ -35,6 +35,25 @@ function createEncounterCharacters() {
         encounterCharacters[ec.id] = ec;
 
         return ec;
+      },
+      findFor(encounter) {
+        return encounterCharacters
+          .toArray()
+          .filter(({ encounterId }) => encounterId === encounter.id)
+          .map(({ characterId, initiative }) => ({
+            ...characters[characterId],
+            initiative,
+          }))
+          .sort((a, b) => b.initiative - a.initiative);
+      },
+      nextActiveFor(encounter) {
+        const characters = ec.findFor(encounter);
+        const prev = characters.findIndex(
+          ({ name }) => name === encounter.activeCharacter
+        );
+        const next = Math.floor((prev + 1) % characters.length);
+
+        return characters[next];
       },
     };
   });

@@ -15,7 +15,6 @@ export default function DisplayEncounter() {
   const encounter = useEncounter(id as string);
   const encounterCharacters = useEncounterCharacters();
   const charactersCollection = useCharacterCollection();
-  const characters = useCharactersInEncounter(encounter);
 
   if (!encounter) return <h2>404</h2>;
 
@@ -39,7 +38,9 @@ export default function DisplayEncounter() {
       <AddCharacterForm encounter={encounter} />
       <button
         onClick={() => {
-          encounter.activeCharacter = characters.getNextActive().id;
+          encounter.activeCharacter = encounterCharacters.nextActiveFor(
+            encounter
+          ).id;
         }}
       >
         Next Turn

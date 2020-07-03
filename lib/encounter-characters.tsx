@@ -13,6 +13,8 @@ export interface EncounterCharacter {
 
 export interface EncounterCharacterMethods {
   add(encounter: Encounter, character: Character): EncounterCharacter;
+  nextActiveFor(encounter: Encounter): Character;
+  findFor(encounter: Encounter): (Character & { initiative: number })[];
 }
 
 export function useEncounterCharacters() {
@@ -26,32 +28,10 @@ export function useEncounterCharacters() {
   return db.encounterCharacters;
 }
 
-export function useCharactersInEncounter(encounter: Encounter): Characters {
-  const characterCollection = useCharacterCollection();
+export function useCharactersInEncounter(encounter: Encounter) {
   const encounterCharacters = useEncounterCharacters();
 
   if (!encounter) return [];
-  const characters: Characters = encounterCharacters
-    .toArray()
-    .filter(({ encounterId }) => encounterId === encounter.id)
-    .map(({ characterId, initiative }) => ({
-      ...characterCollection[characterId],
-      initiative,
-    }))
-    .sort((a, b) => b.initiative - a.initiative);
 
-  characters.getNextActive = () => {
-    const prev = characters.findIndex(
-      ({ name }) => name === encounter.activeCharacter
-    );
-    const next = Math.floor((prev + 1) % characters.length);
-
-    return characters[next];
-  };
-
-  return characters;
-}
-
-interface Characters extends Array<Character & { initiative: number }> {
-  getNextActive?(): Character;
+  return encounterCharacters.findFor(encounter);
 }
