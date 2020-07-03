@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { DbContext } from '@db-context';
+import { useForceRender } from '@use-force-render';
 
 export interface Encounter {
   id?: string;
@@ -30,10 +31,4 @@ export function useEncounter(id?: string) {
   }, [db]);
 
   return db.encounters[id];
-}
-
-function useForceRender() {
-  const [, set] = useState(0);
-
-  return () => set((i) => i + 1);
 }
