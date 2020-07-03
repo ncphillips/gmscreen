@@ -1,7 +1,6 @@
 import { useRef } from 'react';
-import { Character, useCharacterCollection } from '@characters';
-import { useEncounterCharacters } from '@encounter-characters';
-import { watch } from 'babas';
+import { useCharacterCollection } from '@react-characters';
+import { useEncounterCharacters } from '@react-encounter-characters';
 
 export function AddCharacterForm({ encounter }: { encounter }) {
   const encounterCharacters = useEncounterCharacters();

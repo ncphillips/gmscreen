@@ -1,5 +1,5 @@
-import { useEncounter } from '@encounters';
-import { useCharactersInEncounter } from '@encounter-characters';
+import { useEncounter } from '@react-encounters';
+import { useCharactersInEncounter } from '@react-encounter-characters';
 
 export function InitiativeOrder({ id }: { id: string }) {
   const encounter = useEncounter(id);

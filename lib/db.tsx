@@ -1,12 +1,8 @@
-import { watch, createCollection, Subscribable, Collection } from 'babas';
+import { watch, createCollection, Subscribable } from 'babas';
 import { Encounter } from '@encounters';
 import { Character } from '@characters';
-import {
-  EncounterCharacter,
-  EncounterCharacterMethods,
-} from '@encounter-characters';
-import { uid } from '@uid';
-import { D20 } from '@dice';
+import { createEncounterCharacters } from '@encounter-characters';
+import { write, read } from '@storage';
 
 export const createDb = () => {
   const encounters = collectionOfWatched<Encounter>('encounters');
@@ -18,58 +14,11 @@ export const createDb = () => {
   };
 };
 
-function createEncounterCharacters(characters: Collection<Character>) {
-  const encounterCharacters = createCollection<
-    EncounterCharacter,
-    EncounterCharacterMethods
-  >(load('encounter-characters'), (ec) => {
-    return {
-      add(encounter: Encounter, character: Character) {
-        const ec: EncounterCharacter = {
-          id: uid(),
-          characterId: character.id,
-          encounterId: encounter.id,
-          initiative: character.initMod + D20.roll(),
-        };
-
-        encounterCharacters[ec.id] = ec;
-
-        return ec;
-      },
-      findFor(encounter) {
-        return encounterCharacters
-          .toArray()
-          .filter(({ encounterId }) => encounterId === encounter.id)
-          .map(({ characterId, initiative }) => ({
-            ...characters[characterId],
-            initiative,
-          }))
-          .sort((a, b) => b.initiative - a.initiative);
-      },
-      nextActiveFor(encounter) {
-        const characters = ec.findFor(encounter);
-        const prev = characters.findIndex(
-          ({ name }) => name === encounter.activeCharacter
-        );
-        const next = Math.floor((prev + 1) % characters.length);
-
-        return characters[next];
-      },
-    };
-  });
-
-  encounterCharacters.subscribe((data: any) =>
-    save('encounter-characters', data)
-  );
-
-  return encounterCharacters;
-}
-
 /**
  * COLLECTION OF WATCHED ITEMS
  */
 function loadWatchedCollection(key: string) {
-  const col = load(key);
+  const col = read(key);
   Object.keys(col).forEach((key) => {
     col[key] = watch(col[key]);
   });
@@ -79,7 +28,7 @@ function loadWatchedCollection(key: string) {
 function collectionOfWatched<Entry>(key: string) {
   function syncOnItemChange(item: Subscribable<Entry>) {
     item.subscribe(() => {
-      save(key, collection);
+      write(key, collection);
     });
   }
 
@@ -97,7 +46,7 @@ function collectionOfWatched<Entry>(key: string) {
     },
   }));
 
-  collection.subscribe((data) => save(key, data.target));
+  collection.subscribe((data) => write(key, data.target));
   collection.toArray().forEach(syncOnItemChange);
 
   return collection;
@@ -105,32 +54,4 @@ function collectionOfWatched<Entry>(key: string) {
 
 interface WatchedMethods<Entry> {
   add(id: string, entry: Entry): Subscribable<Entry>;
-}
-
-/**
- *
- * LOCAL STORAGE
- */
-function load(key) {
-  try {
-    const a = JSON.parse(localStorage.getItem(key)) || {};
-    return a;
-  } catch {
-    return {};
-  }
-}
-
-function save(key: string, data: any) {
-  let d;
-  try {
-    d = JSON.stringify(data);
-  } catch (e) {
-    console.error(e);
-  }
-
-  if (key === 'encountrs') {
-    console.log('Saving', d);
-  }
-
-  localStorage.setItem(key, d);
 }

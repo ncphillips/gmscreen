@@ -1,5 +1,5 @@
 import { Layout } from '@components/layout';
-import { useEncounterCollection } from '@encounters';
+import { useEncounterCollection } from '@react-encounters';
 import { useRef, useContext } from 'react';
 import Link from 'next/link';
 import { DbContext } from '@db-context';

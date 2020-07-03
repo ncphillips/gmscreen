@@ -1,12 +1,9 @@
 import { useRouter } from 'next/router';
-import { useEncounter } from '@encounters';
+import { useEncounter } from '@react-encounters';
 import { InitiativeOrder } from '@components/initiative-order';
 import { AddCharacterForm } from '@components/add-character';
-import { useCharacterCollection } from '@characters';
-import {
-  useEncounterCharacters,
-  useCharactersInEncounter,
-} from '@encounter-characters';
+import { useCharacterCollection } from '@react-characters';
+import { useEncounterCharacters } from '@react-encounter-characters';
 
 export default function DisplayEncounter() {
   const router = useRouter();
