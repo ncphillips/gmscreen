@@ -10,5 +10,5 @@ export interface Encounter {
 export type EncountCollection = Collection<Encounter>;
 
 export function createEncounterCollection() {
-  return collectionOfWatched('encounters');
+  return collectionOfWatched<Encounter>('encounters');
 }
