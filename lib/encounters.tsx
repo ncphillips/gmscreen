@@ -4,7 +4,7 @@ import { DbContext } from '@db-context';
 export interface Encounter {
   id?: string;
   name: string;
-  characters: string[];
+  activeCharacter?: string;
 }
 
 export function useEncounterCollection() {

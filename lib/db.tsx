@@ -1,15 +1,17 @@
 import { watch, createCollection, Subscribable } from 'babas';
 import { Encounter } from '@encounters';
 import { Character } from '@characters';
+import { EncounterCharacter } from '@encounter-characters';
 
 export const createDb = () => {
   return watch({
-    encounters: createSyncCollection<Subscribable<Encounter>>('encounters'),
-    characters: createSyncCollection<Character>('characters'),
+    encounters: collectionOfWatched<Subscribable<Encounter>>('encounters'),
+    characters: collectionOfWatched<Character>('characters'),
+    encounterCharacters: collection<EncounterCharacter>('encounter-characters'),
   });
 };
 
-function createSyncCollection<T>(key: string) {
+function collectionOfWatched<T>(key: string) {
   const col = load(key);
   Object.keys(col).forEach((key) => {
     col[key] = watch(col[key]);
@@ -20,14 +22,25 @@ function createSyncCollection<T>(key: string) {
   return collection;
 }
 
+function collection<T>(key: string) {
+  const collection = createCollection<T>(load(key));
+  collection.subscribe((e) => save(key, e));
+  return collection;
+}
+
 function load(key) {
   try {
-    return JSON.parse(localStorage.getItem(key)) || {};
+    const a = JSON.parse(localStorage.getItem(key)) || {};
+    console.log(a);
+    return a;
   } catch {
     return {};
   }
 }
 
 function save(key: string, data: any) {
-  localStorage.setItem(key, JSON.stringify(data));
+  const d = JSON.stringify(data);
+
+  console.log({ d });
+  localStorage.setItem(key, d);
 }

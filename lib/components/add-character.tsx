@@ -1,8 +1,11 @@
 import { useRef } from 'react';
 import { Character, useCharacterCollection } from '@characters';
 import { D20 } from '@dice';
+import { useEncounterCharacters } from '@encounter-characters';
+import { uid } from '@uid';
 
 export function AddCharacterForm({ encounter }: { encounter }) {
+  const encounterCharacters = useEncounterCharacters();
   const characters = useCharacterCollection();
   const nameRef = useRef<HTMLInputElement>();
   const initModRef = useRef<HTMLInputElement>();
@@ -18,12 +21,15 @@ export function AddCharacterForm({ encounter }: { encounter }) {
               id: name,
               name,
               initMod,
-              initiative: initMod + D20.roll(),
             };
 
-            const names = encounter.characters || [];
-
-            encounter.characters = [...names, name];
+            const id = uid();
+            encounterCharacters[id] = {
+              id,
+              encounterId: encounter.id,
+              characterId: name,
+              initiative: initMod + D20.roll(),
+            };
           }
         }}
       >

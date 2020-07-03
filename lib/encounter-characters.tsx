@@ -1,25 +1,22 @@
 import { useState, useEffect, useContext } from 'react';
 import { DbContext } from '@db-context';
 
-export interface Character {
-  id?: string;
-  name: string;
-  initMod: number;
+export interface EncounterCharacter {
+  id: string;
+  encounterId: string;
+  characterId: string;
+  initiative: number;
 }
 
-export function useCharacterCollection() {
+export function useEncounterCharacters() {
   const forceRender = useForceRender();
   const db = useContext(DbContext);
 
   useEffect(() => {
-    db.characters.subscribe(forceRender);
+    db.encounterCharacters.subscribe(forceRender);
   }, [db]);
 
-  return db.characters;
-}
-
-export function useCharacter(id?: string) {
-  return {};
+  return db.encounterCharacters;
 }
 
 function useForceRender() {

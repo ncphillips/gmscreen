@@ -3,6 +3,7 @@ import { useEncounterCollection } from '@encounters';
 import { useRef, useContext } from 'react';
 import Link from 'next/link';
 import { DbContext } from '@db-context';
+import { watch } from 'babas';
 
 export default function Home() {
   return (
@@ -49,10 +50,10 @@ function CreateEncounterForm() {
 
         if (!name) return;
 
-        db.encounters[name] = {
+        db.encounters[name] = watch({
           id: name,
           name,
-        };
+        });
       }}
     >
       <label>
