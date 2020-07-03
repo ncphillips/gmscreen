@@ -1,11 +1,9 @@
-import { Encounter, useEncounterCollection, useEncounter } from '@encounters';
-import { useCharacterCollection } from '@characters';
-import { useEncounterCharacters } from '@encounter-characters';
+import { useEncounter } from '@encounters';
+import { useCharactersInEncounter } from '@encounter-characters';
 
 export function InitiativeOrder({ id }: { id: string }) {
   const encounter = useEncounter(id);
-  const characters = useCharacterCollection();
-  const encounterCharacters = useEncounterCharacters();
+  const characters = useCharactersInEncounter(encounter);
   return (
     <table>
       <thead>
@@ -15,23 +13,15 @@ export function InitiativeOrder({ id }: { id: string }) {
         </tr>
       </thead>
       <tbody>
-        {encounterCharacters
-          .toArray()
-          .filter(({ encounterId }) => encounterId === id)
-          .map(({ characterId, initiative }) => ({
-            ...characters[characterId],
-            initiative,
-          }))
-          .sort((a, b) => b.initiative - a.initiative)
-          .map((character) => {
-            return (
-              <tr>
-                <td>{character.initiative}</td>
-                <td>{character.name}</td>
-                <td>{character.name === encounter.activeCharacter && '<--'}</td>
-              </tr>
-            );
-          })}
+        {characters.map((character) => {
+          return (
+            <tr>
+              <td>{character.initiative}</td>
+              <td>{character.name}</td>
+              <td>{character.name === encounter.activeCharacter && '<--'}</td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );

@@ -2,10 +2,7 @@ import { useEffect, useContext } from 'react';
 import { DbContext } from '@db-context';
 import { useForceRender } from '@use-force-render';
 import { Encounter } from '@encounters';
-import { Character } from '@characters';
-import { Collection } from 'babas';
-import { D20 } from '@dice';
-import { uid } from '@uid';
+import { Character, useCharacterCollection } from '@characters';
 
 export interface EncounterCharacter {
   id: string;
@@ -27,4 +24,17 @@ export function useEncounterCharacters() {
   }, [db]);
 
   return db.encounterCharacters;
+}
+
+export function useCharactersInEncounter(encounter: Encounter) {
+  const characters = useCharacterCollection();
+  const encounterCharacters = useEncounterCharacters();
+  return encounterCharacters
+    .toArray()
+    .filter(({ encounterId }) => encounterId === encounter.id)
+    .map(({ characterId, initiative }) => ({
+      ...characters[characterId],
+      initiative,
+    }))
+    .sort((a, b) => b.initiative - a.initiative);
 }

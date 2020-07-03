@@ -2,8 +2,11 @@ import { useRouter } from 'next/router';
 import { useEncounter } from '@encounters';
 import { InitiativeOrder } from '@components/initiative-order';
 import { AddCharacterForm } from '@components/add-character';
-import { useCharacterCollection, useCharacter } from '@characters';
-import { useEncounterCharacters } from '@encounter-characters';
+import { useCharacterCollection } from '@characters';
+import {
+  useEncounterCharacters,
+  useCharactersInEncounter,
+} from '@encounter-characters';
 
 export default function DisplayEncounter() {
   const router = useRouter();
@@ -12,6 +15,7 @@ export default function DisplayEncounter() {
   const encounter = useEncounter(id as string);
   const encounterCharacters = useEncounterCharacters();
   const charactersCollection = useCharacterCollection();
+  const characters = useCharactersInEncounter(encounter);
 
   if (!encounter) return <h2>404</h2>;
 
@@ -35,12 +39,6 @@ export default function DisplayEncounter() {
       <AddCharacterForm encounter={encounter} />
       <button
         onClick={() => {
-          const characters = encounterCharacters
-            .toArray()
-            .filter(({ encounterId }) => encounterId === id)
-            .sort((a, b) => b.initiative - a.initiative)
-            .map(({ characterId }) => charactersCollection[characterId]);
-
           const prev = characters.findIndex(
             ({ name }) => name === encounter.activeCharacter
           );
