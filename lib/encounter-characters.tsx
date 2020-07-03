@@ -26,15 +26,32 @@ export function useEncounterCharacters() {
   return db.encounterCharacters;
 }
 
-export function useCharactersInEncounter(encounter: Encounter) {
-  const characters = useCharacterCollection();
+export function useCharactersInEncounter(encounter: Encounter): Characters {
+  const characterCollection = useCharacterCollection();
   const encounterCharacters = useEncounterCharacters();
-  return encounterCharacters
+
+  if (!encounter) return [];
+  const characters: Characters = encounterCharacters
     .toArray()
     .filter(({ encounterId }) => encounterId === encounter.id)
     .map(({ characterId, initiative }) => ({
-      ...characters[characterId],
+      ...characterCollection[characterId],
       initiative,
     }))
     .sort((a, b) => b.initiative - a.initiative);
+
+  characters.getNextActive = () => {
+    const prev = characters.findIndex(
+      ({ name }) => name === encounter.activeCharacter
+    );
+    const next = Math.floor((prev + 1) % characters.length);
+
+    return characters[next];
+  };
+
+  return characters;
+}
+
+interface Characters extends Array<Character & { initiative: number }> {
+  getNextActive?(): Character;
 }

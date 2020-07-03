@@ -39,12 +39,7 @@ export default function DisplayEncounter() {
       <AddCharacterForm encounter={encounter} />
       <button
         onClick={() => {
-          const prev = characters.findIndex(
-            ({ name }) => name === encounter.activeCharacter
-          );
-          const next = Math.floor((prev + 1) % characters.length);
-
-          encounter.activeCharacter = characters[next].name;
+          encounter.activeCharacter = characters.getNextActive().id;
         }}
       >
         Next Turn

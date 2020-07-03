@@ -79,7 +79,6 @@ function collection<Entry>(key: string) {
 function load(key) {
   try {
     const a = JSON.parse(localStorage.getItem(key)) || {};
-    console.log(a);
     return a;
   } catch {
     return {};
@@ -89,6 +88,5 @@ function load(key) {
 function save(key: string, data: any) {
   const d = JSON.stringify(data);
 
-  console.log({ d });
   localStorage.setItem(key, d);
 }
