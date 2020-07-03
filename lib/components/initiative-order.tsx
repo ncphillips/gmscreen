@@ -18,7 +18,7 @@ export function InitiativeOrder({ id }: { id: string }) {
         {characters.map((character) => {
           return (
             <tr>
-              <td>{character.name === encounter.activeCharacter && '<--'}</td>
+              <td>{character.name === encounter.activeCharacter && '-->'}</td>
               <td>{character.initiative}</td>
               <td>{character.name}</td>
               <td>{character.hpCurrent}</td>
