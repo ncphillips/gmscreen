@@ -12,9 +12,7 @@ export function useEncounterCollection() {
   const forceRender = useForceRender();
   const db = useContext(DbContext);
 
-  useEffect(() => {
-    db.encounters.subscribe(forceRender);
-  }, [db]);
+  useEffect(() => db.encounters.subscribe(forceRender), [db]);
 
   return db.encounters;
 }

@@ -9,8 +9,16 @@ import { uid } from '@uid';
 import { D20 } from '@dice';
 
 export const createDb = () => {
-  const encounters = collectionOfWatched<Subscribable<Encounter>>('encounters');
+  const encounters = collectionOfWatched<Encounter>('encounters');
   const characters = collectionOfWatched<Character>('characters');
+  return {
+    encounters,
+    characters,
+    encounterCharacters: createEncounterCharacters(),
+  };
+};
+
+function createEncounterCharacters() {
   const encounterCharacters = createCollection<
     EncounterCharacter,
     EncounterCharacterMethods
@@ -30,14 +38,11 @@ export const createDb = () => {
       },
     };
   });
+
   encounterCharacters.subscribe((e) => save('encounter-characters', e));
 
-  return {
-    encounters,
-    characters,
-    encounterCharacters,
-  };
-};
+  return encounterCharacters;
+}
 
 function loadWatchedCollection(key: string) {
   const col = load(key);
@@ -48,9 +53,21 @@ function loadWatchedCollection(key: string) {
 }
 
 function collectionOfWatched<Entry>(key: string) {
-  const collection = createCollection<Entry>(loadWatchedCollection(key));
+  const collection = createCollection<
+    Subscribable<Entry>,
+    WatchedMethods<Entry>
+  >(loadWatchedCollection(key), (c) => ({
+    add(id: string, data: Entry) {
+      // @ts-ignore
+      return (c[id] = watch<Entry>(data));
+    },
+  }));
   collection.subscribe((e) => save(key, e));
   return collection;
+}
+
+interface WatchedMethods<Entry> {
+  add(id: string, entry: Entry): Subscribable<Entry>;
 }
 
 function collection<Entry>(key: string) {

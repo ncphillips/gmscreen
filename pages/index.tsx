@@ -50,7 +50,7 @@ function CreateEncounterForm() {
 
         if (!name) return;
 
-        db.encounters[name] = watch({
+        db.encounters.add(name, {
           id: name,
           name,
         });

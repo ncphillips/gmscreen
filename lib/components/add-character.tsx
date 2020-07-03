@@ -16,11 +16,11 @@ export function AddCharacterForm({ encounter }: { encounter }) {
           const name = nameRef.current.value;
           const initMod = ~~initModRef.current.value;
           if (name) {
-            const character = (characters[name] = watch({
+            const character = characters.add(name, {
               id: name,
               name,
               initMod,
-            }));
+            });
 
             encounterCharacters.add(encounter, character);
           }
