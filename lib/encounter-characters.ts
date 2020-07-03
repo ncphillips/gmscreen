@@ -1,6 +1,6 @@
 import { Encounter } from '@encounters';
-import { Character } from '@characters';
-import { Collection, createCollection } from 'babas';
+import { Character, CharacterCollection } from '@characters';
+import { createCollection, Collection } from 'babas';
 import { uid } from '@uid';
 import { D20 } from '@dice';
 import { read, write } from '@storage';
@@ -12,13 +12,15 @@ export interface EncounterCharacter {
   initiative: number;
 }
 
-export interface EncounterCharacterMethods {
+export type EncounterCharacterCollection = Collection<EncounterCharacter>;
+
+interface EncounterCharacterMethods {
   add(encounter: Encounter, character: Character): EncounterCharacter;
   nextActiveFor(encounter: Encounter): Character;
   findFor(encounter: Encounter): (Character & { initiative: number })[];
 }
 
-export function createEncounterCharacters(characters: Collection<Character>) {
+export function createEncounterCharacters(characters: CharacterCollection) {
   const encounterCharacters = createCollection<
     EncounterCharacter,
     EncounterCharacterMethods
