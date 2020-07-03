@@ -58,11 +58,16 @@ function createEncounterCharacters(characters: Collection<Character>) {
     };
   });
 
-  encounterCharacters.subscribe((e) => save('encounter-characters', e));
+  encounterCharacters.subscribe((data: any) =>
+    save('encounter-characters', data)
+  );
 
   return encounterCharacters;
 }
 
+/**
+ * COLLECTION OF WATCHED ITEMS
+ */
 function loadWatchedCollection(key: string) {
   const col = load(key);
   Object.keys(col).forEach((key) => {
@@ -72,16 +77,29 @@ function loadWatchedCollection(key: string) {
 }
 
 function collectionOfWatched<Entry>(key: string) {
+  function syncOnItemChange(item: Subscribable<Entry>) {
+    item.subscribe(() => {
+      save(key, collection);
+    });
+  }
+
+  const initialData = loadWatchedCollection(key);
+
   const collection = createCollection<
     Subscribable<Entry>,
     WatchedMethods<Entry>
-  >(loadWatchedCollection(key), (c) => ({
+  >(initialData, (collection) => ({
     add(id: string, data: Entry) {
       // @ts-ignore
-      return (c[id] = watch<Entry>(data));
+      const item = (collection[id] = watch<Entry>(data));
+      syncOnItemChange(item);
+      return item;
     },
   }));
-  collection.subscribe((e) => save(key, e));
+
+  collection.subscribe((data) => save(key, data.target));
+  collection.toArray().forEach(syncOnItemChange);
+
   return collection;
 }
 
@@ -89,12 +107,10 @@ interface WatchedMethods<Entry> {
   add(id: string, entry: Entry): Subscribable<Entry>;
 }
 
-function collection<Entry>(key: string) {
-  const collection = createCollection<Entry>(load(key));
-  collection.subscribe((e) => save(key, e));
-  return collection;
-}
-
+/**
+ *
+ * LOCAL STORAGE
+ */
 function load(key) {
   try {
     const a = JSON.parse(localStorage.getItem(key)) || {};
@@ -105,7 +121,16 @@ function load(key) {
 }
 
 function save(key: string, data: any) {
-  const d = JSON.stringify(data);
+  let d;
+  try {
+    d = JSON.stringify(data);
+  } catch (e) {
+    console.error(e);
+  }
+
+  if (key === 'encountrs') {
+    console.log('Saving', d);
+  }
 
   localStorage.setItem(key, d);
 }
